@@ -1,0 +1,36 @@
+name: Deploy to Aliyun OSS
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 部署到阿里云OSS
+      - name: Upload files to OSS
+        uses: fangbinwei/aliyun-oss-website-action@v1
+        with:
+          accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
+          accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
+          bucket: ${{ secrets.OSS_BUCKET }}
+          endpoint: ${{ secrets.OSS_ENDPOINT }}
+          folder: .
+          indexPage: index.html
+          notFoundPage: 404.html
+          # 增量上传,只上传变化的文件
+          incremental: true
+          # 跳过设置静态页面配置(如果OSS已经配置过)
+          skipSetting: false
